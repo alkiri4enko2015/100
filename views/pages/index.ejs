@@ -1,19 +1,76 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>#100днейкода</title>
-</head>
-<style type="text/css">
-  div{
-      width:100px;
-      height:100px;
-      background-color: red;
-      display:inline-block;
+    <meta charset="UTF-8">
+    <title></title>
+    
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<style>
+    .container {
+        margin-top: 2rem;
     }
-</style>>
+</style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        canvas {
+            outline: 1px solid black;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
 <body>
-  #100днейк
-  <div class="left_button"></div>
-  <div class="right_button"></div>
+
+<div class="container">
+            <a href="/controllers" style="float: right" target="_blank">контроллерам</a>
+            <canvas id='canvas'></canvas>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+<script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+<script>
+  let socket = io(location.origin);
+    let stage = new createjs.Stage("canvas");
+    let bitmaps_array = [];
+    socket.on('comand_o', function (data) {
+        if (data.socket_id in bitmaps_array) {
+            switch (data.command) {
+                case 'top':
+                    bitmaps_array[data.socket_id].y -= 10;
+                    console.log('top');
+                    break;
+                case 'bottom':
+                    bitmaps_array[data.socket_id].y += 10;
+                    console.log('bottom');
+                    break;
+                case 'right':
+                    bitmaps_array[data.socket_id].x += 10;
+                    console.log('right');
+                    break;
+                case 'left':
+                    bitmaps_array[data.socket_id].x -= 10;
+                    console.log('left');
+                    break;
+                case 'delete':
+                    stage.removeChild(bitmaps_array[data.socket_id]);
+                    delete bitmaps_array[data.socket_id];
+                    break;
+            }
+        } else {
+            let bitmap = new createjs.Bitmap("http://piq.codeus.net/static/media/userpics/piq_139594.png");
+            bitmap.scaleX = 0.3;
+            bitmap.scaleY = 0.3;
+            bitmap.x = 40;
+            bitmap.y = 40;
+            stage.addChild(bitmap);
+            bitmaps_array[data.socket_id] = bitmap;
+        }
+        stage.update();
+    });
+</script>
 </body>
 </html>
