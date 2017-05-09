@@ -33,12 +33,30 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
 <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
 <script>
+
+    function getRandomInt(min, max)
+    {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function get_random_color() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.round(Math.random() * 15)];
+    }
+    return color;
+}
+
+
   let socket = io(location.origin);
     let stage = new createjs.Stage("canvas");
     let bitmaps_array = [];
+
     socket.on('comand_o', function (data) {
+        //console.log(data.x+" "+data.y+" "+data.socket_id);
         if (data.socket_id in bitmaps_array) {
-            switch (data.command) {
+            /*switch (data.command) {
                 case 'top':
                     bitmaps_array[data.socket_id].y -= 10;
                     console.log('top');
@@ -59,15 +77,22 @@
                     stage.removeChild(bitmaps_array[data.socket_id]);
                     delete bitmaps_array[data.socket_id];
                     break;
-            }
+            }*/
+            //console.log(data.x+" "+data.y);
+            bitmaps_array[data.socket_id].x = data.x;
+            bitmaps_array[data.socket_id].y = data.y;
         } else {
-            let bitmap = new createjs.Bitmap("http://piq.codeus.net/static/media/userpics/piq_139594.png");
+            /*let bitmap = new createjs.Bitmap("http://d9hhrg4mnvzow.cloudfront.net/www.geofiltergurus.com/786ececc-cursor_01y01y01y01y000000.png");
             bitmap.scaleX = 0.3;
             bitmap.scaleY = 0.3;
             bitmap.x = 40;
             bitmap.y = 40;
             stage.addChild(bitmap);
-            bitmaps_array[data.socket_id] = bitmap;
+            bitmaps_array[data.socket_id] = bitmap;*/
+            var circle = new createjs.Shape();
+            circle.graphics.beginFill(get_random_color()).drawCircle(0, 0, getRandomInt(2,20));
+            stage.addChild(circle);
+            bitmaps_array[data.socket_id] = circle;
         }
         stage.update();
     });

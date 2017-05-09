@@ -69,10 +69,10 @@ function handler (req, res) {
  
 io.on('connection', function (socket) {
   socket.on('comand_i', function (data) {
+        //console.log(data);
         data.socket_id = socket.id;
         socket.broadcast.emit('comand_o', data);
     });
-
     socket.on('disconnect', function(){
         socket.broadcast.emit('comand_o', {
             socket_id: socket.id,
