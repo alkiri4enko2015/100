@@ -4,6 +4,12 @@
   <title>Контроллер</title>
 </head>
 <style type="text/css">
+  canvas {
+            outline: 1px solid black;
+            width: 100%;
+            height: 100%;
+            
+        }
   .left,.top,.right,.bottom{
     width:100px;
     height: 100px;
@@ -52,11 +58,31 @@
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
 <script>
     let socket = io(location.origin);
     $(document).ready(function(){
+    var width = parseInt($("canvas").css("width"));
+    var height = parseInt($("canvas").css("height"));
+    var stage = new createjs.Stage("canvas");
+    var bitmap = new createjs.Bitmap("http://d9hhrg4mnvzow.cloudfront.net/www.geofiltergurus.com/786ececc-cursor_01y01y01y01y000000.png");
+    bitmap.scaleX = 0.3;
+     bitmap.scaleY = 0.3;
+    bitmap.x = 0;
+    bitmap.y = 0;
+    //alert(stage.x+" "+height+" "+width+" "+height/2+" "+bitmap.x+" "+bitmap.image.height);
+    stage.addChild(bitmap);
+    stage.update();  
+    stage.on("stagemousemove",function(event){
+        bitmap.x = event.stageX-6;
+        bitmap.y = event.stageY-1;
+        sendCommand(bitmap.x,bitmap.y);
+        stage.update();
+        //console.log(bitmap.x);
+    });
+    //sendCommand(100);
     
-    $(".left").click(function(){
+    /*$(".left").click(function(){
         sendCommand("left");
         console.log("left");
     });
@@ -71,18 +97,19 @@
     $(".bottom").click(function(){
         sendCommand("bottom");
         console.log("bottom");
+    });*/
     });
-  });
-     function sendCommand(command) {
-        socket.emit('comand_i', {command:command});
+     function sendCommand(command,y) {
+        socket.emit('comand_i', {x:command,y:y});
     }
 </script>
 <body>
 <div class="joy">
-  <div class="left"><div class="tr_left"></div></div>
+  <!--<div class="left"><div class="tr_left"></div></div>
   <div class="top"><div class="tr_top"></div></div>
   <div class="right"><div class="tr_right"></div></div>
-  <div class="bottom"><div class="tr_bottom"></div></div>
+  <div class="bottom"><div class="tr_bottom"></div></div>-->
+  <canvas id='canvas'></canvas>
 </div>
 </body>
 </html>

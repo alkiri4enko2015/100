@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Главная</title>
+    <title>25 день</title>
     
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
@@ -26,20 +26,37 @@
 <body>
 
 <div class="container">
-            <a href="/controllers" style="float: right" target="_blank">Контроллер</a>
-            <a href="/25" style="float: left">25 день</a></br>
+            <a href="/25/controllers" style="float: right" target="_blank">Контроллер</a>
+            <a href="/index" style="float: left">Главная</a>
             <canvas id='canvas'></canvas>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
 <script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
 <script>
+    function getRandomInt(min, max)
+    {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function get_random_color() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.round(Math.random() * 15)];
+    }
+    return color;
+}
   let socket = io(location.origin);
     let stage = new createjs.Stage("canvas");
-    let bitmaps_array = [];
+
+    var bitmaps_array = new Array(10);
+
+	var socket_i = [];
+
     socket.on('comand_o', function (data) {
-        if (data.socket_id in bitmaps_array) {
-            switch (data.command) {
+        //console.log(data.x+" "+data.y+" "+data.socket_id);
+        if (data.socket_id in socket_i) {
+            /*switch (data.command) {
                 case 'top':
                     bitmaps_array[data.socket_id].y -= 10;
                     console.log('top');
@@ -60,17 +77,40 @@
                     stage.removeChild(bitmaps_array[data.socket_id]);
                     delete bitmaps_array[data.socket_id];
                     break;
+            }*/
+            //console.log(data.x+" "+data.y);
+            for(var i = 1;i<=5;i++)
+           	{
+            	var ref = bitmaps_array[data.socket_id][i];
+            	createjs.Tween.get(ref, {override: true}).to({x: data.x, y: data.y},100+(i*20));
             }
         } else {
-            let bitmap = new createjs.Bitmap("http://piq.codeus.net/static/media/userpics/piq_139594.png");
+            /*let bitmap = new createjs.Bitmap("http://d9hhrg4mnvzow.cloudfront.net/www.geofiltergurus.com/786ececc-cursor_01y01y01y01y000000.png");
             bitmap.scaleX = 0.3;
             bitmap.scaleY = 0.3;
             bitmap.x = 40;
             bitmap.y = 40;
             stage.addChild(bitmap);
-            bitmaps_array[data.socket_id] = bitmap;
+            bitmaps_array[data.socket_id] = bitmap;*/
+            var color = get_random_color();
+            var rand = getRandomInt(2,20);
+
+            bitmaps_array[data.socket_id] = new Array(10);
+
+            for(var i = 1;i<=5;i++)
+           	{
+            	var circle = new createjs.Shape();
+            	circle.graphics.beginFill(color).drawCircle(0, 0, rand);
+            	//createjs.Tween.get(ref, {override: true}).to({x: data.x, y: data.y},100+(i*20));
+            	stage.addChild(circle);
+            	bitmaps_array[data.socket_id][i] = circle;
+            	socket_i[data.socket_id] = data.socket_id;
+            	console.log(data.socket_id);
+            }
         }
         stage.update();
+        createjs.Ticker.setFPS(60);
+		createjs.Ticker.addEventListener("tick", stage);
     });
 </script>
 </body>

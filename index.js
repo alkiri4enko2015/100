@@ -50,8 +50,14 @@ err.set('view engine', 'ejs');
 err.get('/index', function (req, res) {
     res.render('pages/index');
 });
+err.get('/25', function (req, res) {
+    res.render('pages/25/index');
+});
 err.get('/controllers', function (req, res) {
     res.render('pages/controller');
+});
+err.get('/25/controllers', function (req, res) {
+    res.render('pages/25/controller');
 });
 
 function handler (req, res) {
@@ -69,10 +75,10 @@ function handler (req, res) {
  
 io.on('connection', function (socket) {
   socket.on('comand_i', function (data) {
-        //console.log(data);
         data.socket_id = socket.id;
         socket.broadcast.emit('comand_o', data);
     });
+
     socket.on('disconnect', function(){
         socket.broadcast.emit('comand_o', {
             socket_id: socket.id,
