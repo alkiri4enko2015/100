@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Контроллер</title>
+</head>
+<style type="text/css">
+  canvas {
+            outline: 1px solid black;
+            width: 100%;
+            height: 100%;
+            
+        }
+  .left,.top,.right,.bottom{
+    width:100px;
+    height: 100px;
+    background-color:transparent;
+    position:absolute;
+    cursor: pointer;
+  }
+  .left{
+    top:100px;
+    left:0px;
+  }
+  .top{
+    top:0px;
+    left:100px;
+  }
+  .right{
+    top:100px;
+    left:200px;
+  }
+  .bottom{
+    top:200px;
+    left:100px;
+  }
+  .tr_left,.tr_top,.tr_right,.tr_bottom{
+    border: 30px solid transparent; border-right: 30px solid #434b5c;
+    position:relative;
+    left:-35px;
+    top:20px;
+    /*cursor: pointer;*/
+  }
+  .tr_top{
+    transform: rotate(90deg);
+    top:-20px;
+    left:0px;
+  }
+  .tr_right{
+    transform: rotate(180deg);
+    top:20px;
+    left:35px;
+  }
+  .tr_bottom{
+    transform: rotate(270deg);
+    top:60px;
+    left:0px;
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+<script>
+    let socket = io(location.origin);
+    $(document).ready(function(){
+    var width = parseInt($("canvas").css("width"));
+    var height = parseInt($("canvas").css("height"));
+    var stage = new createjs.Stage("canvas");
+    var bitmap = new createjs.Bitmap("http://d9hhrg4mnvzow.cloudfront.net/www.geofiltergurus.com/786ececc-cursor_01y01y01y01y000000.png");
+    bitmap.scaleX = 0.3;
+     bitmap.scaleY = 0.3;
+    bitmap.x = 0;
+    bitmap.y = 0;
+    //alert(stage.x+" "+height+" "+width+" "+height/2+" "+bitmap.x+" "+bitmap.image.height);
+    stage.addChild(bitmap);
+    stage.update();  
+    stage.on("stagemousemove",function(event){
+        bitmap.x = event.stageX-6;
+        bitmap.y = event.stageY-1;
+        sendCommand(bitmap.x,bitmap.y);
+        stage.update();
+        //console.log(bitmap.x);
+    });
+    //sendCommand(100);
+    
+    /*$(".left").click(function(){
+        sendCommand("left");
+        console.log("left");
+    });
+    $(".top").click(function(){
+        sendCommand("top");
+        console.log("top");
+    });
+    $(".right").click(function(){
+        sendCommand("right");
+        console.log("right");
+    });
+    $(".bottom").click(function(){
+        sendCommand("bottom");
+        console.log("bottom");
+    });*/
+    });
+     function sendCommand(command,y) {
+        socket.emit('comand_i', {x:command,y:y});
+    }
+</script>
+<body>
+<div class="joy">
+  <!--<div class="left"><div class="tr_left"></div></div>
+  <div class="top"><div class="tr_top"></div></div>
+  <div class="right"><div class="tr_right"></div></div>
+  <div class="bottom"><div class="tr_bottom"></div></div>-->
+  <canvas id='canvas'></canvas>
+</div>
+</body>
+</html>

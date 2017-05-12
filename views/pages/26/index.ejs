@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>26 день</title>
+    
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+<style>
+    .container {
+        margin-top: 2rem;
+    }
+</style>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+        .circle{
+            border-radius:50%;
+            background-color:red; 
+            position:absolute;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+            <a href="/26/controllers" style="float: right" target="_blank">Контроллер</a>
+            <a href="/index" style="float: left">Главная</a>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+<script src="https://code.createjs.com/createjs-2015.11.26.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script>
+    function getRandomInt(min, max)
+    {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function get_random_color() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.round(Math.random() * 15)];
+    }
+    return color;
+    }
+
+    let socket = io(location.origin);
+	var socket_i = [];
+    socket.on('comand_o', function (data) {
+        if (data.socket_id in socket_i) {
+            for(var i = 1;i<=5;i++)
+           	{
+                $("#"+data.socket_id+""+i+""+"").animate({"top":""+data.y+"px","left":""+data.x+"px"},1+(i*5));
+            }
+        } else {
+            var color = get_random_color();
+            var rand = getRandomInt(10,100);
+            for(var i = 1;i<=5;i++)
+           	{
+            	$('body').append("<div id="+data.socket_id+""+i+""+" class=\"circle\"></div>");
+                $("#"+data.socket_id+""+i+""+"").css({"top":"100px","left":"100px","width":""+rand+"px","height":""+rand+"px","background-color":""+color+""});
+            	socket_i[data.socket_id] = data.socket_id;
+            }
+        }
+    });
+</script>
+</body>
+</html>

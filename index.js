@@ -59,6 +59,12 @@ err.get('/controllers', function (req, res) {
 err.get('/25/controllers', function (req, res) {
     res.render('pages/25/controller');
 });
+err.get('/26', function (req, res) {
+    res.render('pages/26/index');
+});
+err.get('/26/controllers', function (req, res) {
+    res.render('pages/26/controller');
+});
 
 function handler (req, res) {
   fs.readFile(__dirname + '/views/pages/index.ejs',
